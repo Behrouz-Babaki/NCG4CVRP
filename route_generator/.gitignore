@@ -1,0 +1,4 @@
+build/
+rg_wrapper.cpp
+route_generator.*.so
+.vscode/

@@ -1,0 +1,4 @@
+build/
+esprc_wrapper.cpp
+esprc.*.so
+.ipynb_checkpoints
