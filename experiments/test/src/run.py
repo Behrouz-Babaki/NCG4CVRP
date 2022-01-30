@@ -24,9 +24,9 @@ policy_map = {
     'kld': KldPolicy
 }
 
-def get_inference_model(model_type, model_file):
+def get_inference_model(model_type, model_file, top_ks):
     Policy = policy_map[model_type]
-    learned_model = Policy(learn_quadratic=False)
+    learned_model = Policy(learn_quadratic=False, ks=top_ks)
     learned_model.restore_state(model_file)
     return learned_model
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     dataloader = torch.utils.data.DataLoader(test_data, batch_size=batch_size,
                             shuffle = False, num_workers = num_workers, collate_fn = load_batch)
 
-    model = get_inference_model(args.model_type, args.model_file)
+    model = get_inference_model(args.model_type, args.model_file, top_ks)
     mean_loss = 0
     mean_kacc = np.zeros(len(top_ks))
 
@@ -59,7 +59,10 @@ if __name__ == '__main__':
             loss = model(batch)
 
         batch_size = len(batch[-1])
-        mean_loss += loss.detach().item() * batch_size
+        if args.model_type in ('kld', 'mse'):
+            mean_loss += model.batch_ce_loss.detach().numpy() * batch_size
+        else:
+            mean_loss += loss.detach().item() * batch_size
         mean_kacc += model.kacc.detach().numpy() * batch_size
         n_samples_processed += batch_size
 

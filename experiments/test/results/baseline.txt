@@ -1,0 +1,2 @@
+baseline
+TEST LOSS: 41.192  acc@1: 0.460 acc@10: 0.774 acc@100: 0.934 acc@1000: 0.983
